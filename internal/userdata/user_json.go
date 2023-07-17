@@ -24,10 +24,10 @@ func loginFromFile(file string) *loginFile {
 	return &loginFile{filepath.Clean(file)}
 }
 
-func (l *loginFile) get(id int) (Login, error) {
+func (l *loginFile) get(id int) (*Login, error) {
 	f, err := os.ReadFile(l.filepath)
 	if err != nil {
-		return Login{}, fmt.Errorf("couldn't read file: %s. Error: %w", l.filepath, err)
+		return nil, fmt.Errorf("couldn't read file: %s. Error: %w", l.filepath, err)
 	}
 
 	loginMap := make(map[string]Login)
@@ -35,13 +35,13 @@ func (l *loginFile) get(id int) (Login, error) {
 
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
-		return Login{}, fmt.Errorf("couldn't parse file: %s. Error: %w", l.filepath, err)
+		return nil, fmt.Errorf("couldn't parse file: %s. Error: %w", l.filepath, err)
 	}
 
 	login, ok := loginMap[strconv.Itoa(id)]
 	if !ok {
-		return Login{}, fmt.Errorf("%d id could not be found", id)
+		return nil, fmt.Errorf("%d id could not be found", id)
 	}
 
-	return login, nil
+	return &login, nil
 }
